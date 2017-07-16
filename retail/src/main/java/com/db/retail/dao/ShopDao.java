@@ -1,8 +1,8 @@
-package com.retail.dao;
+package com.db.retail.dao;
 
 import java.util.List;
 
-import com.retail.domain.Shop;
+import com.db.retail.domain.Shop;
 
 public interface ShopDao {
 

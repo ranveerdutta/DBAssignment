@@ -1,4 +1,4 @@
-package com.retail.domain;
+package com.db.retail.domain;
 
 public class GeoDetails {
 

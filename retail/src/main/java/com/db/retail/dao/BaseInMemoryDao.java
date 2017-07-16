@@ -1,4 +1,4 @@
-package com.retail.dao;
+package com.db.retail.dao;
 
 import java.util.LinkedList;
 import java.util.List;
