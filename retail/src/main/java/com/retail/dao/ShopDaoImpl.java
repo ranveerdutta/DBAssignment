@@ -1,10 +1,10 @@
-package com.db.retail.dao;
+package com.retail.dao;
 
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.db.retail.domain.Shop;
+import com.retail.domain.Shop;
 
 @Component
 public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{

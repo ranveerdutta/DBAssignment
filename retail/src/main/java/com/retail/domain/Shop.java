@@ -1,4 +1,4 @@
-package com.db.retail.domain;
+package com.retail.domain;
 
 public class Shop {
 
