@@ -3,7 +3,7 @@ package com.db.retail.dao;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class BaseInMemoryDao<T> {
+public abstract class BaseInMemoryDao<T> implements IBaseDao<T>{
 	
 	private List<T> inMemoryObjects;
 
@@ -19,6 +19,10 @@ public abstract class BaseInMemoryDao<T> {
 	
 	public List<T> getAll() {
 		return inMemoryObjects;
+	}
+	
+	public void cleanAll() {
+		inMemoryObjects.clear();
 	}
 	
 	

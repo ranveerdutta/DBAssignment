@@ -22,5 +22,9 @@ public class Address {
 		this.postCode = postCode;
 	}
 	
+	public String createAddressString() {
+		return this.getNumber() + " " + this.getPostCode();
+	}
+	
 	
 }

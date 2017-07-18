@@ -2,6 +2,7 @@ package com.db.retail.domain;
 
 public class Shop {
 
+	//assuming shop name is unique
 	private String shopName;
 	
 	private Address shopAddress;
@@ -30,6 +31,13 @@ public class Shop {
 
 	public void setStoreGeoDetails(GeoDetails storeGeoDetails) {
 		this.storeGeoDetails = storeGeoDetails;
+	}
+	
+	public String createShopAddressString() {
+		StringBuilder str = new StringBuilder(this.getShopName());
+		str.append(" ");
+		str.append(this.getShopAddress().createAddressString());
+		return str.toString();
 	}
 	
 }

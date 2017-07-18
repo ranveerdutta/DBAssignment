@@ -34,5 +34,10 @@ public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{
 		return null;
 	}
 
+	@Override
+	public void deleteAll() {
+		super.cleanAll();
+	}
+
 
 }

@@ -11,4 +11,6 @@ public interface ShopDao {
 	Shop getStore(String shopName);
 	
 	List<Shop> getAllShops();
+	
+	void deleteAll();
 }

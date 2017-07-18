@@ -4,12 +4,12 @@ public class GeoDetails {
 
 	private double latitude;
 	
-	private double logitude;
+	private double longitude;
 
-	public GeoDetails(double latitude, double logitude) {
+	public GeoDetails(double latitude, double longitude) {
 		super();
 		this.latitude = latitude;
-		this.logitude = logitude;
+		this.longitude = longitude;
 	}
 
 	public double getLatitude() {
@@ -20,12 +20,12 @@ public class GeoDetails {
 		this.latitude = latitude;
 	}
 
-	public double getLogitude() {
-		return logitude;
+	public double getLongitude() {
+		return longitude;
 	}
 
-	public void setLogitude(double logitude) {
-		this.logitude = logitude;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 	
 	
