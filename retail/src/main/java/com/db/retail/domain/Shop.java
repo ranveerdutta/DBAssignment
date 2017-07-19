@@ -1,5 +1,11 @@
 package com.db.retail.domain;
 
+
+/**
+ * POJO class  representing shop entity
+ * @author ranveer
+ *
+ */
 public class Shop {
 
 	private String shopName;

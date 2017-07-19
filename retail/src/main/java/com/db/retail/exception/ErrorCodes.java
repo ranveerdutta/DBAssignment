@@ -1,5 +1,11 @@
 package com.db.retail.exception;
 
+
+/**
+ * Error codes to be thrown along with exception
+ * @author RD00488188
+ *
+ */
 public enum ErrorCodes {
 	
 	UNKNOWN_ERROR("system error"),

@@ -14,6 +14,11 @@ import com.db.retail.exception.RetailSystemException;
 import com.db.retail.googleservice.client.GeoCodingClient;
 import com.db.retail.utils.GeoUtils;
 
+/**
+ * Service layer implementation of all the shop operations
+ * @author ranveer
+ *
+ */
 @Service
 public class ShopServiceImpl implements IShopService{
 	

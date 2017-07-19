@@ -1,5 +1,10 @@
 package com.db.retail.domain;
 
+/**
+ * POJO class  representing Geo details(latitude/longitude) entity
+ * @author ranveer
+ *
+ */
 public class GeoDetails {
 
 	private double latitude;

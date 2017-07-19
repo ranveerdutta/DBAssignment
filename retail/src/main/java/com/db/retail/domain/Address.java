@@ -1,5 +1,10 @@
 package com.db.retail.domain;
 
+/**
+ * POJO class  representing address entity
+ * @author ranveer
+ *
+ */
 public class Address {
 
 	private String number;

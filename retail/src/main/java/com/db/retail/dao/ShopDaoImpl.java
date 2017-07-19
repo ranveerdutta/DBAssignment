@@ -6,6 +6,11 @@ import org.springframework.stereotype.Component;
 
 import com.db.retail.domain.Shop;
 
+/**
+ * Implementation class having operations for Shop entity
+ * @author RD00488188
+ *
+ */
 @Component
 public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{
 

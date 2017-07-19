@@ -4,6 +4,11 @@ import java.util.Set;
 
 import com.db.retail.domain.Shop;
 
+/**
+ * Interface having DB operations for Shop entity
+ * @author ranveer
+ *
+ */
 public interface ShopDao {
 
 	void addShop(Shop shop);

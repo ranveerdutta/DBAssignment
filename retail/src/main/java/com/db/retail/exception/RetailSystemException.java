@@ -1,5 +1,11 @@
 package com.db.retail.exception;
 
+
+/**
+ * Exception class to be used for all the thrown exception from the Retail system
+ * @author ranveer
+ *
+ */
 public class RetailSystemException extends RuntimeException{
 
 	/**

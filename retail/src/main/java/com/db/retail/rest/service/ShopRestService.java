@@ -17,6 +17,12 @@ import com.db.retail.exception.ErrorCodes;
 import com.db.retail.exception.RetailSystemException;
 import com.db.retail.service.IShopService;
 
+
+/**
+ * Rest layer class having all the Rest API for Shop resource
+ * @author ranveer
+ *
+ */
 @RestController
 @RequestMapping("/shop")
 public class ShopRestService {

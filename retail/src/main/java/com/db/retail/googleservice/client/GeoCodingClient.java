@@ -12,6 +12,11 @@ import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.code.geocoder.model.GeocoderResult;
 import com.google.code.geocoder.model.GeocoderStatus;
 
+/**
+ * Http client for making Geocode API call to google service
+ * @author ranveer
+ *
+ */
 @Component
 public class GeoCodingClient{
 	

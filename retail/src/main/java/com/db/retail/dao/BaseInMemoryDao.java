@@ -3,6 +3,12 @@ package com.db.retail.dao;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Abstract class having DB operations for in-memory database
+ * @author ranveer
+ *
+ * @param <T>
+ */
 public abstract class BaseInMemoryDao<T> implements IBaseDao<T>{
 	
 	private Set<T> inMemoryObjects;
