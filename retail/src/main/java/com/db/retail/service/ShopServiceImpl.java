@@ -1,5 +1,7 @@
 package com.db.retail.service;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -10,6 +12,7 @@ import com.db.retail.domain.Shop;
 import com.db.retail.exception.ErrorCodes;
 import com.db.retail.exception.RetailSystemException;
 import com.db.retail.googleservice.client.GeoCodingClient;
+import com.db.retail.utils.GeoUtils;
 
 @Service
 public class ShopServiceImpl implements IShopService{
@@ -31,12 +34,32 @@ public class ShopServiceImpl implements IShopService{
 		
 		// fetch lat and long of shop address
 		GeoDetails geoDetails = geoCodingClient.getGeoDetails(shop.createShopAddressString());
-		shop.setStoreGeoDetails(geoDetails);
+		shop.setShopGeoDetails(geoDetails);
 		
 		//add the shop details
 		shopDao.addShop(shop);
 		//return added shop along with the geo details
 		return shop;
+	}
+	
+	@Override
+	public Shop getNearestShop(GeoDetails geoDetails) {
+		Set<Shop> shopList = shopDao.getAllShops();
+		if(null == shopList || shopList.isEmpty()) {
+			throw new RetailSystemException(ErrorCodes.NO_SHOP_IN_THE_SYSTEM);
+		}
+		
+		double minDistanceOfShop = -1;
+		Shop nearestShop = null;
+		for(Shop shop : shopList) {
+			double distance = GeoUtils.calculateDistanceInMiles(geoDetails, shop.getShopGeoDetails());
+			if(null == nearestShop || distance < minDistanceOfShop) {
+				nearestShop = shop;
+				minDistanceOfShop = distance;
+			}
+		}
+		
+		return nearestShop;
 	}
 
 }

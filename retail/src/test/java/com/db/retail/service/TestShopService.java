@@ -71,6 +71,34 @@ public class TestShopService {
 	}
 	
 	@Test
+	public void testAddShopWithDuplicatedData() {
+		Shop shop = new Shop();
+		shop.setShopName("test name");
+		Address addr = new Address();
+		addr.setNumber("abc");
+		addr.setPostCode("ghj");
+		shop.setShopAddress(addr);
+		
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
+		
+		Shop addedShop = shopService.addShop(shop);
+		Shop addedShop1 = shopService.addShop(shop);
+		Assert.assertEquals(2.34, addedShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, addedShop.getShopGeoDetails().getLongitude(), 0);
+		
+		Assert.assertEquals(2.34, addedShop1.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, addedShop1.getShopGeoDetails().getLongitude(), 0);
+		
+		Set<Shop> shopSet = shopDao.getAllShops();
+		Assert.assertEquals(1, shopSet.size());
+		Shop firstShop = shopSet.iterator().next();
+		Assert.assertEquals("test name", firstShop.getShopName());
+		
+		Assert.assertEquals(2.34, firstShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, firstShop.getShopGeoDetails().getLongitude(), 0);
+	}
+	
+	@Test
 	public void testAddShopWithTwoAddition() {
 		Shop shop1 = new Shop();
 		shop1.setShopName("test name 1");
@@ -134,6 +162,124 @@ public class TestShopService {
 		shopService.addShop(shop);
 	}
 	
+	@Test
+	public void testGetNearestShopWithValidData1() {
+		Shop shop1 = new Shop();
+		shop1.setShopName("shop1");
+		Address addr1 = new Address();
+		addr1.setNumber("abc");
+		addr1.setPostCode("ghj");
+		shop1.setShopAddress(addr1);
+		
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
+		//add shop1
+		shopService.addShop(shop1);
+		
+		
+		Shop shop2 = new Shop();
+		shop2.setShopName("shop2");
+		Address addr2 = new Address();
+		addr2.setNumber("abc");
+		addr2.setPostCode("ghj");
+		shop2.setShopAddress(addr2);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
+		//add shop2
+		shopService.addShop(shop2);
+		
+		Shop shop3 = new Shop();
+		shop3.setShopName("shop3");
+		Address addr3 = new Address();
+		addr3.setNumber("abc");
+		addr3.setPostCode("ghj");
+		shop3.setShopAddress(addr3);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
+		//add shop3
+		shopService.addShop(shop3);
+		
+		Shop nearestShop = shopService.getNearestShop(new GeoDetails(12.937, 77.606));
+		Assert.assertEquals("shop3", nearestShop.getShopName());
+	}
+	
+	@Test
+	public void testGetNearestShopWithValidData2() {
+		Shop shop1 = new Shop();
+		shop1.setShopName("shop1");
+		Address addr1 = new Address();
+		addr1.setNumber("abc");
+		addr1.setPostCode("ghj");
+		shop1.setShopAddress(addr1);
+		
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
+		//add shop1
+		shopService.addShop(shop1);
+		
+		
+		Shop shop2 = new Shop();
+		shop2.setShopName("shop2");
+		Address addr2 = new Address();
+		addr2.setNumber("abc");
+		addr2.setPostCode("ghj");
+		shop2.setShopAddress(addr2);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
+		//add shop2
+		shopService.addShop(shop2);
+		
+		Shop shop3 = new Shop();
+		shop3.setShopName("shop3");
+		Address addr3 = new Address();
+		addr3.setNumber("abc");
+		addr3.setPostCode("ghj");
+		shop3.setShopAddress(addr3);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
+		//add shop3
+		shopService.addShop(shop3);
+		
+		Shop nearestShop = shopService.getNearestShop(new GeoDetails(18.5822, 73.6914));
+		Assert.assertEquals("shop1", nearestShop.getShopName());
+	}
+	
+	@Test
+	public void testGetNearestShopWithValidData3() {
+		Shop shop1 = new Shop();
+		shop1.setShopName("shop1");
+		Address addr1 = new Address();
+		addr1.setNumber("abc");
+		addr1.setPostCode("ghj");
+		shop1.setShopAddress(addr1);
+		
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
+		//add shop1
+		shopService.addShop(shop1);
+		
+		
+		Shop shop2 = new Shop();
+		shop2.setShopName("shop2");
+		Address addr2 = new Address();
+		addr2.setNumber("abc");
+		addr2.setPostCode("ghj");
+		shop2.setShopAddress(addr2);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
+		//add shop2
+		shopService.addShop(shop2);
+		
+		Shop shop3 = new Shop();
+		shop3.setShopName("shop3");
+		Address addr3 = new Address();
+		addr3.setNumber("abc");
+		addr3.setPostCode("ghj");
+		shop3.setShopAddress(addr3);
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
+		//add shop3
+		shopService.addShop(shop3);
+		
+		Shop nearestShop = shopService.getNearestShop(new GeoDetails(17.570, 78.433));
+		Assert.assertEquals("shop2", nearestShop.getShopName());
+	}
+	
+	@Test(expected = RetailSystemException.class)
+	public void testGetNearestShopWithoutANyShopInSystem() {
+		shopService.getNearestShop(new GeoDetails(17.570, 78.433));
+	}
 
 	@After
 	public void tearDown() {
