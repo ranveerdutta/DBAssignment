@@ -43,7 +43,7 @@ How to run the Rest APIs:
           "shopName":"abc",
           "shopAddress":{"number":"test", "postCode":"abc"}
         }
-        
+   Response code: CREATED(201)     
    Response body:
    {
       "shopName": "abc",
@@ -60,6 +60,7 @@ How to run the Rest APIs:
   2) Get nearest shop API:
      URL(with sample value for path param: http://localhost:8090/shop/nearest?latitude=1.23&longitude=2.34
      Method: GET
+     Response code : OK(200)
      Response body:
      {
         "shopName": "abc",
@@ -72,3 +73,9 @@ How to run the Rest APIs:
             "longitude": -117.8135579
         }
     }
+
+   In case of error below common response structure will be followed by all the Rest APIs:
+   {
+       "message": "error message",
+       "status": "fail"
+   }
