@@ -37,13 +37,17 @@ How to run the Rest APIs:
 ---------------------------
 1) Add shop API
    URL: http://localhost:8090/shop
+   
    Method: POST
+   
    Request body:
        {
           "shopName":"abc",
           "shopAddress":{"number":"test", "postCode":"abc"}
         }
-   Response code: CREATED(201)     
+        
+   Response code: CREATED(201)   
+   
    Response body:
    {
       "shopName": "abc",
@@ -59,8 +63,11 @@ How to run the Rest APIs:
   
   2) Get nearest shop API:
      URL(with sample value for path param: http://localhost:8090/shop/nearest?latitude=1.23&longitude=2.34
+     
      Method: GET
+     
      Response code : OK(200)
+     
      Response body:
      {
         "shopName": "abc",
