@@ -3,8 +3,10 @@ package com.db.retail.service;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Set;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,15 +58,16 @@ public class TestShopService {
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
 		
 		Shop addedShop = shopService.addShop(shop);
-		Assert.assertEquals(2.34, addedShop.getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop.getStoreGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, addedShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, addedShop.getShopGeoDetails().getLongitude(), 0);
 		
-		List<Shop> shopList = shopDao.getAllShops();
-		Assert.assertEquals(1, shopList.size());
-		Assert.assertEquals("test name", shopList.get(0).getShopName());
+		Set<Shop> shopSet = shopDao.getAllShops();
+		Assert.assertEquals(1, shopSet.size());
+		Shop firstShop = shopSet.iterator().next();
+		Assert.assertEquals("test name", firstShop.getShopName());
 		
-		Assert.assertEquals(2.34, shopList.get(0).getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, shopList.get(0).getStoreGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, firstShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, firstShop.getShopGeoDetails().getLongitude(), 0);
 	}
 	
 	@Test
@@ -79,8 +82,8 @@ public class TestShopService {
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
 		
 		Shop addedShop1 = shopService.addShop(shop1);
-		Assert.assertEquals(2.34, addedShop1.getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop1.getStoreGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, addedShop1.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, addedShop1.getShopGeoDetails().getLongitude(), 0);
 		
 		Shop shop2 = new Shop();
 		shop2.setShopName("test name 2");
@@ -90,18 +93,21 @@ public class TestShopService {
 		shop2.setShopAddress(addr2);
 		
 		Shop addedShop2 = shopService.addShop(shop2);
-		Assert.assertEquals(2.34, addedShop2.getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop2.getStoreGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, addedShop2.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, addedShop2.getShopGeoDetails().getLongitude(), 0);
 		
-		List<Shop> shopList = shopDao.getAllShops();
-		Assert.assertEquals(2, shopList.size());
-		Assert.assertEquals("test name 1", shopList.get(0).getShopName());
-		Assert.assertEquals("test name 2", shopList.get(1).getShopName());
+		Set<Shop> shopSet = shopDao.getAllShops();
+		Iterator<Shop> iter = shopSet.iterator();
+		Assert.assertEquals(2, shopSet.size());
+		Shop firstShop = iter.next();
+		Shop secondShop = iter.next();
+		Assert.assertEquals("test name 1", firstShop.getShopName());
+		Assert.assertEquals("test name 2", secondShop.getShopName());
 		
-		Assert.assertEquals(2.34, shopList.get(0).getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, shopList.get(0).getStoreGeoDetails().getLongitude(), 0);
-		Assert.assertEquals(2.34, shopList.get(1).getStoreGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, shopList.get(1).getStoreGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, firstShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, firstShop.getShopGeoDetails().getLongitude(), 0);
+		Assert.assertEquals(2.34, secondShop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, secondShop.getShopGeoDetails().getLongitude(), 0);
 	}
 	
 	@Test(expected = RetailSystemException.class)
@@ -129,4 +135,9 @@ public class TestShopService {
 	}
 	
 
+	@After
+	public void tearDown() {
+		shopDao.deleteAll();
+	}
+	
 }

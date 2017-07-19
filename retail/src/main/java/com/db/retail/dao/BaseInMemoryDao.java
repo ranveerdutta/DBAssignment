@@ -1,15 +1,15 @@
 package com.db.retail.dao;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public abstract class BaseInMemoryDao<T> implements IBaseDao<T>{
 	
-	private List<T> inMemoryObjects;
+	private Set<T> inMemoryObjects;
 
 	{
 		if(null == inMemoryObjects) {
-			inMemoryObjects = new LinkedList<>();
+			inMemoryObjects = new LinkedHashSet<>();
 		}
 	}
 	
@@ -17,7 +17,7 @@ public abstract class BaseInMemoryDao<T> implements IBaseDao<T>{
 		inMemoryObjects.add(t);
 	}
 	
-	public List<T> getAll() {
+	public Set<T> getAll() {
 		return inMemoryObjects;
 	}
 	

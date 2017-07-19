@@ -1,12 +1,12 @@
 package com.db.retail.dao;
 
-import java.util.List;
+import java.util.Set;
 
 public interface IBaseDao<T> {
 
 	void addEntity(T t);
 	
-	List<T> getAll();
+	Set<T> getAll();
 	
 	void cleanAll();
 }

@@ -2,12 +2,11 @@ package com.db.retail.domain;
 
 public class Shop {
 
-	//assuming shop name is unique
 	private String shopName;
 	
 	private Address shopAddress;
 	
-	private GeoDetails storeGeoDetails;
+	private GeoDetails shopGeoDetails;
 
 	public String getShopName() {
 		return shopName;
@@ -25,12 +24,12 @@ public class Shop {
 		this.shopAddress = shopAddress;
 	}
 
-	public GeoDetails getStoreGeoDetails() {
-		return storeGeoDetails;
+	public GeoDetails getShopGeoDetails() {
+		return shopGeoDetails;
 	}
 
-	public void setStoreGeoDetails(GeoDetails storeGeoDetails) {
-		this.storeGeoDetails = storeGeoDetails;
+	public void setShopGeoDetails(GeoDetails shopGeoDetails) {
+		this.shopGeoDetails = shopGeoDetails;
 	}
 	
 	public String createShopAddressString() {
@@ -38,6 +37,43 @@ public class Shop {
 		str.append(" ");
 		str.append(this.getShopAddress().createAddressString());
 		return str.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((shopAddress == null) ? 0 : shopAddress.hashCode());
+		result = prime * result + ((shopGeoDetails == null) ? 0 : shopGeoDetails.hashCode());
+		result = prime * result + ((shopName == null) ? 0 : shopName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Shop other = (Shop) obj;
+		if (shopAddress == null) {
+			if (other.shopAddress != null)
+				return false;
+		} else if (!shopAddress.equals(other.shopAddress))
+			return false;
+		if (shopGeoDetails == null) {
+			if (other.shopGeoDetails != null)
+				return false;
+		} else if (!shopGeoDetails.equals(other.shopGeoDetails))
+			return false;
+		if (shopName == null) {
+			if (other.shopName != null)
+				return false;
+		} else if (!shopName.equals(other.shopName))
+			return false;
+		return true;
 	}
 	
 }

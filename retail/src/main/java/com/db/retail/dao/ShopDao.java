@@ -1,6 +1,6 @@
 package com.db.retail.dao;
 
-import java.util.List;
+import java.util.Set;
 
 import com.db.retail.domain.Shop;
 
@@ -10,7 +10,7 @@ public interface ShopDao {
 	
 	Shop getStore(String shopName);
 	
-	List<Shop> getAllShops();
+	Set<Shop> getAllShops();
 	
 	void deleteAll();
 }

@@ -1,6 +1,6 @@
 package com.db.retail.dao;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -15,14 +15,14 @@ public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{
 	}
 	
 	@Override
-	public List<Shop> getAllShops() {
+	public Set<Shop> getAllShops() {
 		return super.getAll();
 	}
 	
 
 	@Override
 	public Shop getStore(String shopName) {
-		List<Shop> shopList = super.getAll();
+		Set<Shop> shopList = super.getAll();
 		if(null == shopList || shopList.isEmpty()) {
 			return null;
 		}
