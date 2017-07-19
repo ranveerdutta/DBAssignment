@@ -82,6 +82,7 @@ How to run the Rest APIs:
     }
 
    In case of error below common response structure will be followed by all the Rest APIs:
+   
    {
        "message": "error message",
        "status": "fail"
