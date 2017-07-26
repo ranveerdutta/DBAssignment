@@ -49,8 +49,6 @@ public class Shop {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((shopAddress == null) ? 0 : shopAddress.hashCode());
-		result = prime * result + ((shopGeoDetails == null) ? 0 : shopGeoDetails.hashCode());
 		result = prime * result + ((shopName == null) ? 0 : shopName.hashCode());
 		return result;
 	}
@@ -64,16 +62,6 @@ public class Shop {
 		if (getClass() != obj.getClass())
 			return false;
 		Shop other = (Shop) obj;
-		if (shopAddress == null) {
-			if (other.shopAddress != null)
-				return false;
-		} else if (!shopAddress.equals(other.shopAddress))
-			return false;
-		if (shopGeoDetails == null) {
-			if (other.shopGeoDetails != null)
-				return false;
-		} else if (!shopGeoDetails.equals(other.shopGeoDetails))
-			return false;
 		if (shopName == null) {
 			if (other.shopName != null)
 				return false;
@@ -81,5 +69,7 @@ public class Shop {
 			return false;
 		return true;
 	}
+
+	
 	
 }

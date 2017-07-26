@@ -36,7 +36,7 @@ public class ShopRestService {
 		return storeService.addShop(shop);
 	}
 	
-	@RequestMapping(value="/nearest", method = RequestMethod.GET)
+	@RequestMapping(value="", method = RequestMethod.GET)
 	@ResponseStatus( HttpStatus.OK)
 	public Shop getNearByStore(@PathParam("latitude") String latitude, @PathParam("longitude") String longitude) {
 		if(StringUtils.isEmpty(latitude) || StringUtils.isEmpty(longitude)) {
