@@ -13,9 +13,9 @@ public interface IShopService {
 	/**
 	 * Method to add a new shop into the system
 	 * @param shop
-	 * @return shop
+	 * @return shop - returns old version of shop if present
 	 */
-	Shop addShop(Shop shop);
+	Shop addOrReplaceShop(Shop shop);
 	
 	/**
 	 * Method to fetch the nearest shop

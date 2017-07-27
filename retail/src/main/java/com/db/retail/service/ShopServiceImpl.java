@@ -29,7 +29,7 @@ public class ShopServiceImpl implements IShopService{
 	private ShopDao shopDao;
 
 	@Override
-	public Shop addShop(Shop shop) {
+	public Shop addOrReplaceShop(Shop shop) {
 		
 		//check if all the fields are present in shop object
 		if(null == shop || StringUtils.isEmpty(shop.getShopName()) || null == shop.getShopAddress()
@@ -42,9 +42,9 @@ public class ShopServiceImpl implements IShopService{
 		shop.setShopGeoDetails(geoDetails);
 		
 		//add the shop details
-		shopDao.addShop(shop);
-		//return added shop along with the geo details
-		return shop;
+		Shop oldShop = shopDao.createNewOrOverrideExistingShop(shop);
+		//return previous version of shop if present
+		return oldShop;
 	}
 	
 	@Override

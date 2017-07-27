@@ -49,6 +49,8 @@ How to run the Rest APIs:
    Response code: CREATED(201)   
    
    Response body:
+   Blank if added first time
+   Previous version of shop if replacing. The format is as below:
    {
       "shopName": "abc",
       "shopAddress": {

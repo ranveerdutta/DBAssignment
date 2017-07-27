@@ -1,7 +1,8 @@
 package com.db.retail.dao;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
+
+import com.db.retail.utils.ConcurrentHashSet;
 
 /**
  * Abstract class having DB operations for in-memory database
@@ -11,24 +12,28 @@ import java.util.Set;
  */
 public abstract class BaseInMemoryDao<T> implements IBaseDao<T>{
 	
-	private Set<T> inMemoryObjects;
+	private ConcurrentHashSet<T> inMemoryObjects;
 
 	{
 		if(null == inMemoryObjects) {
-			inMemoryObjects = new LinkedHashSet<>();
+			inMemoryObjects = new ConcurrentHashSet<>();
 		}
 	}
 	
-	public void addEntity(T t) {
-		inMemoryObjects.add(t);
+	@Override
+	public T saveNewEntityAndReturnOldEntityIfAny(T t) {
+		return inMemoryObjects.insertOrReplace(t);
+		
 	}
 	
+	@Override
 	public Set<T> getAll() {
-		return inMemoryObjects;
+		return inMemoryObjects.getAll();
 	}
 	
+	@Override
 	public void cleanAll() {
-		inMemoryObjects.clear();
+		inMemoryObjects.cleanAll();
 	}
 	
 	

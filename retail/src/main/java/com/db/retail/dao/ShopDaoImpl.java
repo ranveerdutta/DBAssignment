@@ -8,15 +8,15 @@ import com.db.retail.domain.Shop;
 
 /**
  * Implementation class having operations for Shop entity
- * @author RD00488188
+ * @author Ranveer
  *
  */
 @Component
 public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{
 
 	@Override
-	public void addShop(Shop shop) {
-		super.addEntity(shop);
+	public Shop createNewOrOverrideExistingShop(Shop shop){
+		return super.saveNewEntityAndReturnOldEntityIfAny(shop);
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class ShopDaoImpl extends BaseInMemoryDao<Shop> implements ShopDao{
 	
 
 	@Override
-	public Shop getStore(String shopName) {
+	public Shop getShop(String shopName) {
 		Set<Shop> shopList = super.getAll();
 		if(null == shopList || shopList.isEmpty()) {
 			return null;

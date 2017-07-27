@@ -29,13 +29,25 @@ public class ShopRestService {
 	
 	@Autowired
 	private IShopService storeService;
-
+	
+	/**
+	 * Rest API to add or replace shop
+	 * if shop is already present then it returns the old version of the same shop
+	 * @param shop
+	 * @return
+	 */
 	@RequestMapping(value="", method = RequestMethod.POST)
 	@ResponseStatus( HttpStatus.CREATED)
-	public Shop addShop(@RequestBody Shop shop) {
-		return storeService.addShop(shop);
+	public Shop addOrReplaceShop(@RequestBody Shop shop) {
+		return storeService.addOrReplaceShop(shop);
 	}
 	
+	/**
+	 * Returns the details of nearest shop from the passed location(lat/long)
+	 * @param latitude
+	 * @param longitude
+	 * @return
+	 */
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@ResponseStatus( HttpStatus.OK)
 	public Shop getNearByStore(@PathParam("latitude") String latitude, @PathParam("longitude") String longitude) {

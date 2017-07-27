@@ -3,8 +3,12 @@ package com.db.retail.service;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -57,9 +61,10 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
 		
-		Shop addedShop = shopService.addShop(shop);
-		Assert.assertEquals(2.34, addedShop.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop.getShopGeoDetails().getLongitude(), 0);
+		Shop oldShop = shopService.addOrReplaceShop(shop);
+		Assert.assertEquals(2.34, shop.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, shop.getShopGeoDetails().getLongitude(), 0);
+		Assert.assertNull(oldShop);
 		
 		Set<Shop> shopSet = shopDao.getAllShops();
 		Assert.assertEquals(1, shopSet.size());
@@ -81,13 +86,19 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
 		
-		Shop addedShop = shopService.addShop(shop);
-		Shop addedShop1 = shopService.addShop(shop);
-		Assert.assertEquals(2.34, addedShop.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop.getShopGeoDetails().getLongitude(), 0);
+		Shop oldShop = shopService.addOrReplaceShop(shop);
 		
-		Assert.assertEquals(2.34, addedShop1.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop1.getShopGeoDetails().getLongitude(), 0);
+		Shop shop1 = new Shop();
+		shop1.setShopName("test name");
+		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(3.45, 4.56));
+		shop1.setShopAddress(addr);
+		Shop oldShop1 = shopService.addOrReplaceShop(shop1);
+		Assert.assertNull(oldShop);
+		Assert.assertEquals(2.34, oldShop1.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, oldShop1.getShopGeoDetails().getLongitude(), 0);
+		
+		Assert.assertEquals(3.45, shop1.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(4.56, shop1.getShopGeoDetails().getLongitude(), 0);
 		
 		Set<Shop> shopSet = shopDao.getAllShops();
 		Assert.assertEquals(1, shopSet.size());
@@ -109,9 +120,10 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(2.34, 5.23));
 		
-		Shop addedShop1 = shopService.addShop(shop1);
-		Assert.assertEquals(2.34, addedShop1.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop1.getShopGeoDetails().getLongitude(), 0);
+		Shop oldShop1 = shopService.addOrReplaceShop(shop1);
+		Assert.assertNull(oldShop1);
+		Assert.assertEquals(2.34, shop1.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, shop1.getShopGeoDetails().getLongitude(), 0);
 		
 		Shop shop2 = new Shop();
 		shop2.setShopName("test name 2");
@@ -120,22 +132,13 @@ public class TestShopService {
 		addr2.setPostCode("ghj2");
 		shop2.setShopAddress(addr2);
 		
-		Shop addedShop2 = shopService.addShop(shop2);
-		Assert.assertEquals(2.34, addedShop2.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, addedShop2.getShopGeoDetails().getLongitude(), 0);
+		Shop oldShop2 = shopService.addOrReplaceShop(shop2);
+		Assert.assertNull(oldShop2);
+		Assert.assertEquals(2.34, shop2.getShopGeoDetails().getLatitude(), 0);
+		Assert.assertEquals(5.23, shop2.getShopGeoDetails().getLongitude(), 0);
 		
 		Set<Shop> shopSet = shopDao.getAllShops();
-		Iterator<Shop> iter = shopSet.iterator();
 		Assert.assertEquals(2, shopSet.size());
-		Shop firstShop = iter.next();
-		Shop secondShop = iter.next();
-		Assert.assertEquals("test name 1", firstShop.getShopName());
-		Assert.assertEquals("test name 2", secondShop.getShopName());
-		
-		Assert.assertEquals(2.34, firstShop.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, firstShop.getShopGeoDetails().getLongitude(), 0);
-		Assert.assertEquals(2.34, secondShop.getShopGeoDetails().getLatitude(), 0);
-		Assert.assertEquals(5.23, secondShop.getShopGeoDetails().getLongitude(), 0);
 	}
 	
 	@Test(expected = RetailSystemException.class)
@@ -148,7 +151,7 @@ public class TestShopService {
 		shop.setShopAddress(addr);
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenThrow(new RetailSystemException(ErrorCodes.GEOCODE_FETCH_ERROR));
-		shopService.addShop(shop);
+		shopService.addOrReplaceShop(shop);
 	}
 	
 	@Test(expected = RetailSystemException.class)
@@ -159,7 +162,65 @@ public class TestShopService {
 		addr.setPostCode("some address");
 		shop.setShopAddress(addr);
 		
-		shopService.addShop(shop);
+		shopService.addOrReplaceShop(shop);
+	}
+	
+	@Test
+	public void testAddDuplicateShopsWithConcurrentUsers() throws InterruptedException, ExecutionException {
+		Shop shop1 = new Shop();
+		shop1.setShopName("test");
+		Address addr1 = new Address();
+		addr1.setNumber("some address1");
+		addr1.setPostCode("some address1");
+		shop1.setShopAddress(addr1);
+		AddShopCallable callable1 = new AddShopCallable(shop1, shopDao);
+		
+		Shop shop2 = new Shop();
+		shop2.setShopName("test");
+		Address addr2 = new Address();
+		addr2.setNumber("some address2");
+		addr2.setPostCode("some address2");
+		shop2.setShopAddress(addr2);
+		AddShopCallable callable2 = new AddShopCallable(shop2, shopDao);
+		
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		Future<Shop> future1 = executor.submit(callable1);
+		Future<Shop> future2 = executor.submit(callable2);
+		
+		Shop oldShop1 = future1.get();
+		Shop oldShop2 = future2.get();
+		
+		Assert.assertTrue((null == oldShop1 && oldShop2 != null) || (null == oldShop2 && oldShop1 != null));
+		
+	}
+	
+	@Test
+	public void testAddUniqueShopsWithConcurrentUsers() throws InterruptedException, ExecutionException {
+		Shop shop1 = new Shop();
+		shop1.setShopName("test1");
+		Address addr1 = new Address();
+		addr1.setNumber("some address1");
+		addr1.setPostCode("some address1");
+		shop1.setShopAddress(addr1);
+		AddShopCallable callable1 = new AddShopCallable(shop1, shopDao);
+		
+		Shop shop2 = new Shop();
+		shop2.setShopName("test2");
+		Address addr2 = new Address();
+		addr2.setNumber("some address2");
+		addr2.setPostCode("some address2");
+		shop2.setShopAddress(addr2);
+		AddShopCallable callable2 = new AddShopCallable(shop2, shopDao);
+		
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		Future<Shop> future1 = executor.submit(callable1);
+		Future<Shop> future2 = executor.submit(callable2);
+		
+		Shop oldShop1 = future1.get();
+		Shop oldShop2 = future2.get();
+		
+		Assert.assertTrue(null == oldShop1 && null == oldShop2);
+		
 	}
 	
 	@Test
@@ -173,7 +234,7 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
 		//add shop1
-		shopService.addShop(shop1);
+		shopService.addOrReplaceShop(shop1);
 		
 		
 		Shop shop2 = new Shop();
@@ -184,7 +245,7 @@ public class TestShopService {
 		shop2.setShopAddress(addr2);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
 		//add shop2
-		shopService.addShop(shop2);
+		shopService.addOrReplaceShop(shop2);
 		
 		Shop shop3 = new Shop();
 		shop3.setShopName("shop3");
@@ -194,7 +255,7 @@ public class TestShopService {
 		shop3.setShopAddress(addr3);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
 		//add shop3
-		shopService.addShop(shop3);
+		shopService.addOrReplaceShop(shop3);
 		
 		Shop nearestShop = shopService.getNearestShop(new GeoDetails(12.937, 77.606));
 		Assert.assertEquals("shop3", nearestShop.getShopName());
@@ -211,7 +272,7 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
 		//add shop1
-		shopService.addShop(shop1);
+		shopService.addOrReplaceShop(shop1);
 		
 		
 		Shop shop2 = new Shop();
@@ -222,7 +283,7 @@ public class TestShopService {
 		shop2.setShopAddress(addr2);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
 		//add shop2
-		shopService.addShop(shop2);
+		shopService.addOrReplaceShop(shop2);
 		
 		Shop shop3 = new Shop();
 		shop3.setShopName("shop3");
@@ -232,7 +293,7 @@ public class TestShopService {
 		shop3.setShopAddress(addr3);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
 		//add shop3
-		shopService.addShop(shop3);
+		shopService.addOrReplaceShop(shop3);
 		
 		Shop nearestShop = shopService.getNearestShop(new GeoDetails(18.5822, 73.6914));
 		Assert.assertEquals("shop1", nearestShop.getShopName());
@@ -249,7 +310,7 @@ public class TestShopService {
 		
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(18.5822452, 73.6914557));
 		//add shop1
-		shopService.addShop(shop1);
+		shopService.addOrReplaceShop(shop1);
 		
 		
 		Shop shop2 = new Shop();
@@ -260,7 +321,7 @@ public class TestShopService {
 		shop2.setShopAddress(addr2);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(17.5707615, 78.4339131));
 		//add shop2
-		shopService.addShop(shop2);
+		shopService.addOrReplaceShop(shop2);
 		
 		Shop shop3 = new Shop();
 		shop3.setShopName("shop3");
@@ -270,7 +331,7 @@ public class TestShopService {
 		shop3.setShopAddress(addr3);
 		when(geoCodingClientMock.getGeoDetails(any())).thenReturn(new GeoDetails(12.9373056, 77.6064054));
 		//add shop3
-		shopService.addShop(shop3);
+		shopService.addOrReplaceShop(shop3);
 		
 		Shop nearestShop = shopService.getNearestShop(new GeoDetails(17.570, 78.433));
 		Assert.assertEquals("shop2", nearestShop.getShopName());
@@ -286,4 +347,16 @@ public class TestShopService {
 		shopDao.deleteAll();
 	}
 	
+}
+
+class AddShopCallable implements Callable<Shop> {
+	private Shop shop;
+	private ShopDao shopDao;
+	AddShopCallable(Shop shop,ShopDao shopDao){
+          this.shop=shop;
+          this.shopDao=shopDao;             
+    }          
+    public Shop call() throws Exception {
+           return shopDao.createNewOrOverrideExistingShop(shop);
+    }
 }
