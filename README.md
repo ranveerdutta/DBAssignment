@@ -65,7 +65,7 @@ How to run the Rest APIs:
   }
   
   2) Get nearest shop API:
-     URL(with sample value for path param: http://localhost:8090/shop/nearest?latitude=1.23&longitude=2.34
+     URL(with sample value for path param): http://localhost:8090/shop?latitude=35.87&longitude=-75.82
      
      Method: GET
      
