@@ -50,6 +50,7 @@ How to run the Rest APIs:
    
    Response body:
    Blank if added first time
+   
    Previous version of shop if replacing. The format is as below:
    {
       "shopName": "abc",
